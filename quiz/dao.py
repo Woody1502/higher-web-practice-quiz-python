@@ -1,8 +1,6 @@
-"""Модуль c интерфейсами сервисов для работы c БД"""
-
 from abc import ABC, abstractmethod
 
-from quiz.models import Quiz, Question, Category
+from quiz.models import Category, Question, Quiz
 
 
 class AbstractCategoryService(ABC):
@@ -11,7 +9,6 @@ class AbstractCategoryService(ABC):
     @abstractmethod
     def list_categories(self) -> list[Category]:
         """Метод для получения списка категорий"""
-        ...
 
     @abstractmethod
     def get_category(self, category_id: int) -> Category:
@@ -21,7 +18,6 @@ class AbstractCategoryService(ABC):
         :param category_id: Идентификатор категории.
         :return: Категория из БД.
         """
-        ...
 
     @abstractmethod
     def create_category(self, title: str) -> Category:
@@ -31,7 +27,6 @@ class AbstractCategoryService(ABC):
         :param title: Название для категории.
         :return: Созданная категория.
         """
-        ...
 
     @abstractmethod
     def update_category(self, category_id: int, data: dict) -> Category:
@@ -42,7 +37,6 @@ class AbstractCategoryService(ABC):
         :param data: Данные для обновления категории.
         :return: Обновленная категория.
         """
-        ...
 
     @abstractmethod
     def delete_category(self, category_id: int) -> None:
@@ -51,7 +45,6 @@ class AbstractCategoryService(ABC):
 
         :param category_id: Идентификатор категории для удаления.
         """
-        ...
 
 
 class AbstractQuizService(ABC):
@@ -60,7 +53,6 @@ class AbstractQuizService(ABC):
     @abstractmethod
     def list_quizzes(self) -> list[Quiz]:
         """Возвращает список всех квизов."""
-        ...
 
     @abstractmethod
     def get_quiz(self, quiz_id: int) -> Quiz:
@@ -70,7 +62,6 @@ class AbstractQuizService(ABC):
         :param quiz_id: Идентификатор квиза.
         :return: Квиз из БД.
         """
-        ...
 
     @abstractmethod
     def get_quizes_by_title(self, title: str) -> list[Quiz]:
@@ -80,7 +71,6 @@ class AbstractQuizService(ABC):
         :param title: Название квиза.
         :return: Список квизов с подходящими названиями.
         """
-        ...
 
     @abstractmethod
     def create_quiz(self, data: dict) -> Quiz:
@@ -90,7 +80,6 @@ class AbstractQuizService(ABC):
         :param data: Данные из запроса для создания квиза.
         :return: Созданный квиз.
         """
-        ...
 
     @abstractmethod
     def update_quiz(self, quiz_id: int, data: dict) -> Quiz:
@@ -101,7 +90,6 @@ class AbstractQuizService(ABC):
         :param data: Данные для обновления квиза.
         :return: Обновленный квиз.
         """
-        ...
 
     @abstractmethod
     def delete_quiz(self, quiz_id: int) -> None:
@@ -110,7 +98,6 @@ class AbstractQuizService(ABC):
 
         :param quiz_id: Идентификатор квиза для удаления.
         """
-        ...
 
 
 class AbstractQuestionService(ABC):
@@ -123,7 +110,6 @@ class AbstractQuestionService(ABC):
 
         :return: Список вопросов.
         """
-        ...
 
     @abstractmethod
     def get_question(self, question_id: int) -> Question:
@@ -133,7 +119,6 @@ class AbstractQuestionService(ABC):
         :param question_id: Идентификатор вопроса.
         :return: Вопрос из БД.
         """
-        ...
 
     @abstractmethod
     def get_questions_by_text(self, text: str) -> list[Question]:
@@ -143,7 +128,6 @@ class AbstractQuestionService(ABC):
         :param text: Текст вопроса.
         :return: Вопрос из БД.
         """
-        ...
 
     @abstractmethod
     def get_questions_for_quiz(self, quiz_id: int) -> list[Question]:
@@ -153,7 +137,6 @@ class AbstractQuestionService(ABC):
         :param quiz_id: Идентификатор квиза.
         :return: Список вопросов квиза.
         """
-        ...
 
     @abstractmethod
     def create_question(self, quiz_id: int, data: dict) -> Question:
@@ -164,7 +147,6 @@ class AbstractQuestionService(ABC):
         :param data: Данные из запроса для создания вопроса.
         :return: Созданный вопрос.
         """
-        ...
 
     @abstractmethod
     def update_question(self, question_id: int, data: dict) -> Question:
@@ -175,7 +157,6 @@ class AbstractQuestionService(ABC):
         :param data: Данные для обновления вопроса.
         :return: Обновленный вопрос.
         """
-        ...
 
     @abstractmethod
     def delete_question(self, question_id: int) -> None:
@@ -184,7 +165,6 @@ class AbstractQuestionService(ABC):
 
         :param question_id: Идентификатор вопроса для удаления.
         """
-        ...
 
     @abstractmethod
     def check_answer(self, question_id: int, answer: str) -> bool:
@@ -195,7 +175,6 @@ class AbstractQuestionService(ABC):
         :param answer: Ответ пользователя.
         :return: True, если ответ правильный, False - в противном случае.
         """
-        ...
 
     @abstractmethod
     def random_question_from_quiz(self, quiz_id: int) -> Question:
@@ -205,4 +184,3 @@ class AbstractQuestionService(ABC):
         :param quiz_id: Идентификатор квиза.
         :return: Случайный вопрос из квиза.
         """
-        ...
