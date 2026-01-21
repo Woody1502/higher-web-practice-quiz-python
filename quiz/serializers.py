@@ -80,8 +80,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 
         if correct_answer not in options:
             raise serializers.ValidationError([
-                (f"Правильный ответ {correct_answer} "
-                 f"должен быть одним из вариантов: {options}")
+                (f'Правильный ответ {correct_answer} '
+                 f'должен быть одним из вариантов: {options}')
             ])
         if not (data.get('quiz_id') or data.get('category_id')):
             raise serializers.ValidationError([

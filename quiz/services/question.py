@@ -1,5 +1,8 @@
+import random
+
 from quiz.dao import AbstractQuestionService
 from quiz.models import Question, Quiz
+from quiz.services.utils import update_model
 
 
 class QuestionService(AbstractQuestionService):
@@ -59,8 +62,8 @@ class QuestionService(AbstractQuestionService):
         :param data: Данные для обновления вопроса.
         :return: Обновленный вопрос.
         """
-        Question.objects.update(**data)
-        return Question.objects.get(id=question_id)
+
+        return update_model(Question, question_id, data)
 
     def delete_question(self, question_id: int) -> None:
         """
@@ -87,4 +90,4 @@ class QuestionService(AbstractQuestionService):
         :param quiz_id: Идентификатор квиза.
         :return: Случайный вопрос из квиза.
         """
-        return Quiz.objects.get(id=quiz_id).questions.order_by('?').first()
+        return random.choice(Quiz.objects.get(id=quiz_id).questions.all())

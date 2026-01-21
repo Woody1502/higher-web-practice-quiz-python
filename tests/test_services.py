@@ -12,24 +12,21 @@ class TestCategoryService:
 
         self.service = CategoryService()
 
-    def test_create_and_get_category(self) -> None:
+    def test_create_and_get_category(self, category) -> None:
         """Тест создания и получения категории"""
 
-        category = self.service.create_category('Science')
         fetched = self.service.get_category(category.id)
         assert fetched.title == 'Science'
 
-    def test_update_category(self) -> None:
+    def test_update_category(self, category) -> None:
         """Тест обновления категории"""
 
-        category = Category.objects.create(title='Old')
         updated = self.service.update_category(category.id, {'title': 'New'})
         assert updated.title == 'New'
 
-    def test_delete_category(self) -> None:
+    def test_delete_category(self, category) -> None:
         """Тест удаления категории"""
 
-        category = Category.objects.create(title='Temp')
         self.service.delete_category(category.id)
         assert Category.objects.count() == 0
 
@@ -41,25 +38,21 @@ class TestQuizService:
 
         self.service = QuizService()
 
-    def test_create_and_get_category(self) -> None:
+    def test_create_and_get_category(self, quiz) -> None:
         """Тест создания и получения квиза"""
 
-        quiz = self.service.create_quiz({'title': 'Science',
-                                         'description': 'desc'})
         fetched = self.service.get_quiz(quiz.id)
         assert fetched.title == 'Science'
 
-    def test_update_quiz(self) -> None:
+    def test_update_quiz(self, quiz) -> None:
         """Тест обновления квиза"""
 
-        quiz = Quiz.objects.create(title='Old')
         updated = self.service.update_quiz(quiz.id, {'title': 'New'})
         assert updated.title == 'New'
 
-    def test_delete_category(self) -> None:
+    def test_delete_category(self, quiz) -> None:
         """Тест удаления квиза"""
 
-        quiz = Quiz.objects.create(title='Temp')
         self.service.delete_quiz(quiz.id)
         assert Quiz.objects.count() == 0
 
@@ -70,64 +63,22 @@ class TestQuestionService:
         """Подготавливает сервис"""
 
         self.service = QuestionService()
-        self.quiz_service = QuizService()
-        self.category_service=CategoryService()
 
-    def test_create_and_get_category(self) -> None:
+    def test_create_and_get_category(self, question) -> None:
         """Тест создания и получения вопроса"""
 
-        category = self.category_service.create_category({'title': 'Natural',
-                                         'description': 'desc'})
-        quiz = self.quiz_service.create_quiz({'title': 'Science',
-                                         'description': 'desc'})
-        question = self.service.create_question(quiz.id, data={'category_id': category,
-                                                        'text': 'text',
-                                                        'description': 'description',
-                                                        'options': ["1", "2"],
-                                                        'correct_answer': "1",
-                                                        'explanation': 'explanation',
-                                                        'difficulty': 'easy'
-                                                        })
         fetched = self.service.get_question(question.id)
         assert fetched.text == 'text'
 
-    def test_update_question(self) -> None:
+    def test_update_question(self, question) -> None:
         """Тест обновления вопроса"""
 
-        quiz = self.quiz_service.create_quiz({'title': 'Science',
-                                         'description': 'desc'})
-        
-        category = self.category_service.create_category({'title': 'Natural',
-                                         'description': 'desc'})
-        
-        question = self.service.create_question(quiz.id, data={'category_id': category,
-                                                        'text': 'text',
-                                                        'description': 'description',
-                                                        'options': ["1", "2"],
-                                                        'correct_answer': "1",
-                                                        'explanation': 'explanation',
-                                                        'difficulty': 'easy'
-                                                        })
-        updated = self.service.update_question(quiz.id, {'text': 'New'})
+        updated = self.service.update_question(question.id, {'text': 'New'})
         assert updated.text == 'New'
 
-    def test_delete_question(self) -> None:
+    def test_delete_question(self, question) -> None:
         """Тест удаления вопроса"""
 
-        quiz = self.quiz_service.create_quiz({'title': 'Science',
-                                         'description': 'desc'})
-        
-        category = self.category_service.create_category({'title': 'Natural',
-                                         'description': 'desc'})
-        
-        question = self.service.create_question(quiz.id, data={'category_id': category,
-                                                        'text': 'text',
-                                                        'description': 'description',
-                                                        'options': ["1", "2"],
-                                                        'correct_answer': "1",
-                                                        'explanation': 'explanation',
-                                                        'difficulty': 'easy'
-                                                        })
         assert question.text == 'text'
         self.service.delete_question(question.id)
         assert Question.objects.count() == 0

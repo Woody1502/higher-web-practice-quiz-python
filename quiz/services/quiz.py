@@ -1,5 +1,6 @@
 from quiz.dao import AbstractQuizService
 from quiz.models import Quiz
+from quiz.services.utils import update_model
 
 
 class QuizService(AbstractQuizService):
@@ -44,8 +45,7 @@ class QuizService(AbstractQuizService):
         :param data: Данные для обновления квиза.
         :return: Обновленный квиз.
         """
-        Quiz.objects.update(**data)
-        return Quiz.objects.get(**data)
+        return update_model(Quiz, quiz_id, data)
 
     def delete_quiz(self, quiz_id: int) -> None:
         """

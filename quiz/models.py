@@ -9,7 +9,6 @@ class Category(models.Model):
 
     title = models.CharField(
         max_length=TITLE_CAT_LEN,
-        null=False,
         unique=True,
         verbose_name='Имя категории')
 
@@ -18,6 +17,7 @@ class Category(models.Model):
         Docstring для Meta
         """
 
+        ordering = ('title',)
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
 
@@ -105,3 +105,9 @@ class Question(models.Model):
         default_related_name = 'questions'
         verbose_name = 'вопрос'
         verbose_name_plural = 'вопросы'
+
+    def __str__(self):
+        """
+        Docstring для __str__
+        """
+        return self.text[:MAX_LEN]

@@ -15,8 +15,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100, unique=True, verbose_name='Имя категории')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=100,
+                 unique=True, verbose_name='Имя категории')),
             ],
             options={
                 'verbose_name': 'категория',
@@ -26,9 +28,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Quiz',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=200, verbose_name='Имя квиза')),
-                ('description', models.TextField(blank=True, max_length=500, null=True, verbose_name='описание')),
+                ('description', models.TextField(blank=True,
+                 max_length=500, null=True, verbose_name='описание')),
             ],
             options={
                 'verbose_name': 'квиз',
@@ -39,15 +43,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Question',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField(max_length=500, verbose_name='текст вопроса')),
-                ('description', models.TextField(max_length=500, verbose_name='описание')),
+                ('description', models.TextField(
+                    max_length=500, verbose_name='описание')),
                 ('options', models.JSONField(verbose_name='варианты')),
-                ('correct_answer', models.CharField(verbose_name='правильный ответ')),
-                ('explanation', models.CharField(max_length=250, null=True, verbose_name='объяснение')),
-                ('difficulty', models.CharField(choices=[('easy', 'Лёгкий'), ('medium', 'Средний'), ('hard', 'Сложный')])),
-                ('category_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.category', verbose_name='категория')),
-                ('quiz_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.quiz', verbose_name='квиз')),
+                ('correct_answer', models.CharField(
+                    verbose_name='правильный ответ')),
+                ('explanation', models.CharField(
+                    max_length=250, null=True, verbose_name='объяснение')),
+                ('difficulty', models.CharField(choices=[('easy', 'Лёгкий'),
+                                                         ('medium', 'Средний'),
+                                                         ('hard', 'Сложный')])),
+                ('category_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                  to='quiz.category',
+                                                  verbose_name='категория')),
+                ('quiz_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                              to='quiz.quiz',
+                                              verbose_name='квиз')),
             ],
             options={
                 'verbose_name': 'вопрос',

@@ -1,5 +1,6 @@
 from quiz.dao import AbstractCategoryService
 from quiz.models import Category
+from quiz.services.utils import update_model
 
 
 class CategoryService(AbstractCategoryService):
@@ -25,7 +26,8 @@ class CategoryService(AbstractCategoryService):
         :param title: Название для категории.
         :return: Созданная категория.
         """
-        return Category.objects.create(title=title)
+        category, _ = Category.objects.get_or_create(title=title)
+        return category
 
     def update_category(self, category_id: int, data: dict) -> Category:
         """
@@ -35,8 +37,7 @@ class CategoryService(AbstractCategoryService):
         :param data: Данные для обновления категории.
         :return: Обновленная категория.
         """
-        Category.objects.filter(id=category_id).update(**data)
-        return Category.objects.get(id=category_id)
+        return update_model(Category, category_id, data)
 
     def delete_category(self, category_id: int) -> None:
         """

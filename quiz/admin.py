@@ -3,6 +3,7 @@ from django.db.models import Count, Q, QuerySet
 from rest_framework.request import Request
 
 from quiz.utils import MAX_LEN
+
 from .models import Category, Question, Quiz
 
 
@@ -139,7 +140,7 @@ class QuestionAdmin(admin.ModelAdmin):
         """Правильный ответ"""
         if obj.correct_answer and len(obj.correct_answer) > MAX_LEN:
             return f'{obj.correct_answer[:MAX_LEN]}...'
-        return obj.correct_answer or '-'
+        return obj.correct_answer
 
     @admin.display(
         description='Варианты ответов',

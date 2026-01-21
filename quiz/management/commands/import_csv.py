@@ -65,11 +65,7 @@ class Command(BaseCommand):
         df = pd.read_csv(file_path)
         quizzes = []
         for _, row in df.iterrows():
-            quizzes.append(Quiz(
-                id=row['id'],
-                title=row['title'],
-                description=row['description'],
-            ))
+            quizzes.append(Quiz(**row))
         Quiz.objects.bulk_create(quizzes)
 
     def import_questions(self, file_path: str) -> None:

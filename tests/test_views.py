@@ -1,30 +1,29 @@
 import pytest
+from http import HTTPStatus
 from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestCategoryAPI:
-    def test_create_and_get_category(self, client) -> None:
+    def test_create_and_get_category(self, client, category_create_get_url) -> None:
         """Тест создания и получения категории"""
 
-        create_get_url = reverse('category-list')
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             {'title': 'History'},
             content_type='application/json'
         )
-        assert response.status_code == 201
+        assert response.status_code == HTTPStatus.CREATED
 
-        response = client.get(create_get_url)
-        assert response.status_code == 200
+        response = client.get(category_create_get_url)
+        assert response.status_code == HTTPStatus.OK
         assert response.json()[0]['title'] == 'History'
 
-    def test_list_put_delete_category(self, client) -> None:
+    def test_list_put_delete_category(self, client, category_create_get_url) -> None:
         """Тест получения списка, редактирования и удаления категории"""
 
-        create_get_url = reverse('category-list')
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             {'title': 'History'},
             content_type='application/json'
         )
@@ -33,81 +32,96 @@ class TestCategoryAPI:
         response = client.get(
             list_put_delete_url,
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = client.put(list_put_delete_url,
                               {'title': 'Cars'},
                                 content_type='application/json')
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json()['title'] == 'Cars'
 
         response = client.delete(list_put_delete_url)
-        assert response.status_code == 204
+        assert response.status_code == HTTPStatus.NO_CONTENT
 
-    def test_create_invalid_data_category(self, client) -> None:
+    def test_create_invalid_data_category(self, client, category_create_get_url) -> None:
         """Тест с неправильныйми данными (дублирование) категории"""
 
-        create_get_url = reverse('category-list')
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             {'title': 'History'},
             content_type='application/json'
         )
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             {'title': 'History'},
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
-    def test_title_len_category(self, client) -> None:
+    def test_title_len_category(self, client, category_create_get_url) -> None:
         """Тест с неправильными данными(длина поля title) категории"""
 
-        create_get_url = reverse('category-list')
         response = client.post(
-            create_get_url,
+            category_create_get_url,
             {'title': 'History'*1000},
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+
+    def test_not_found(self, client) -> None:
+        """Тест с неверным id"""
+
+        list_put_delete_url = reverse('category-detail', kwargs={'pk': 1})
+
+        response = client.get(list_put_delete_url)
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.put(list_put_delete_url,
+                              {'title': 'Cars'},
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.delete(list_put_delete_url,
+                              {'title': 'Cars'},
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
 
 
 @pytest.mark.django_db
 class TestQuizAPI:
-    def test_create_and_get_quiz(self, client) -> None:
+    def test_create_and_get_quiz(self, client, quiz_create_get_url) -> None:
         """Тест создания и получения квиза"""
 
-        create_get_url = reverse('quiz-list')
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Football',
              'description': 'football description'},
             content_type='application/json'
         )
-        assert response.status_code == 201
+        assert response.status_code == HTTPStatus.CREATED
 
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Baseball'},
             content_type='application/json'
         )
-        assert response.status_code == 201
-        response = client.get(create_get_url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.CREATED
+        response = client.get(quiz_create_get_url)
+        assert response.status_code == HTTPStatus.OK
         assert response.json()[0]['title'] == 'Baseball'
 
-    def test_list_put_delete_quiz(self, client) -> None:
+    def test_list_put_delete_quiz(self, client, quiz_create_get_url) -> None:
         """Тест получения списка, редактирования и удаления квиза"""
 
-        create_get_url = reverse('quiz-list')
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Football'},
             content_type='application/json'
         )
@@ -116,138 +130,105 @@ class TestQuizAPI:
         response = client.get(
             list_put_delete_url,
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = client.put(list_put_delete_url,
                               {'title': 'Cars'},
                                 content_type='application/json')
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json()['title'] == 'Cars'
 
         response = client.delete(list_put_delete_url)
-        assert response.status_code == 204
+        assert response.status_code == HTTPStatus.NO_CONTENT
 
-    def test_create_invalid_data_quiz(self, client) -> None:
+    def test_create_invalid_data_quiz(self, client, quiz_create_get_url) -> None:
         """Тест с неправильныйми данными (дублирование) квиза"""
 
-        create_get_url = reverse('quiz-list')
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Football'},
             content_type='application/json'
         )
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Football'},
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
-    def test_title_desc_len_quiz(self, client) -> None:
+    def test_title_desc_len_quiz(self, client, quiz_create_get_url) -> None:
         """Тест с неправильными данными(длина полей title и description) категории"""
 
-        create_get_url = reverse('quiz-list')
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'History'*1000},
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
         response = client.post(
-            create_get_url,
+            quiz_create_get_url,
             {'title': 'Maths',
              'description': 'qwerty123'*31415},
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+    
+    def test_not_found(self, client) -> None:
+        """Тест с неверным id"""
+        
+        list_put_delete_url = reverse('quiz-detail', kwargs={'pk': 1})
+
+        response = client.get(list_put_delete_url)
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.put(list_put_delete_url,
+                              {'title': 'History of country',
+                               'description': 'description'},
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.delete(list_put_delete_url,
+                              {'title': 'Cars'},
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        quiz_random_url = reverse('quiz-random-question', kwargs={'id': 100})
+
+        response = client.get(quiz_random_url)
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
 
 
 @pytest.mark.django_db
 class TestQuestionAPI:
-    def test_create_and_get_question(self, client) -> None:
+    def test_create_and_get_question(self,
+                                     client,
+                                     question_response,
+                                     question_create_get_url,) -> None:
         """Тест создания и получения вопроса"""
         
-        create_get_url = reverse('quiz-list')
-        response = client.post(
-            create_get_url,
-            {'title': 'History of country',
-             'description': 'description'},
-            content_type='application/json'
-        )
-        quiz_id = response.json()['id']
-        create_get_url = reverse('category-list')
-        response = client.post(
-            create_get_url,
-            {'title': 'History',
-             'description': 'description'},
-            content_type='application/json'
-        )
-        category_id = response.json()['id']
-        create_get_url = reverse('question-list')
-        response = client.post(
-            create_get_url,
-            {'quiz_id': quiz_id,
-             'category_id': category_id,
-             'text': 'text',
-             'description': 'description',
-             'options': ["1", "2"],
-             'correct_answer': "1",
-             'explanation': 'explanation',
-             'difficulty': 'easy'
-             },
-            content_type='application/json'
-        )
-        assert response.status_code == 201
+        assert question_response.status_code == HTTPStatus.CREATED
 
-        response = client.get(create_get_url)
-        assert response.status_code == 200
+        response = client.get(question_create_get_url)
+        assert response.status_code == HTTPStatus.OK
 
-    def test_list_put_delete_question(self, client) -> None:
+    def test_list_put_delete_question(self,
+                                     client,
+                                     question_response,) -> None:
         """Тест получения списка, редактирования и удаления вопроса"""
 
-        create_get_url = reverse('quiz-list')
-        response = client.post(
-            create_get_url,
-            {'title': 'History of country',
-             'description': 'description'},
-            content_type='application/json'
-        )
-
-        quiz_id = response.json()['id']
-
-        create_get_url = reverse('category-list')
-        response = client.post(
-            create_get_url,
-            {'title': 'History',
-             'description': 'description'},
-            content_type='application/json'
-        )
-
-        category_id = response.json()['id']
-
-        create_get_url = reverse('question-list')
-        response = client.post(
-            create_get_url,
-            {'quiz_id': quiz_id,
-             'category_id': category_id,
-             'text': 'text',
-             'description': 'description',
-             'options': ["1", "2"],
-             'correct_answer': "1",
-             'explanation': 'explanation',
-             'difficulty': 'easy'
-             },
-            content_type='application/json'
-        )
-        assert response.status_code == 201
-        question_id = response.json()['id']
+        assert question_response.status_code == HTTPStatus.CREATED
+        question_id = question_response.json()['id']
+        quiz_id = question_response.json()['quiz_id']
+        category_id = question_response.json()['category_id']
         list_put_delete_url = reverse('question-detail', kwargs={'pk': question_id})
         response = client.put(list_put_delete_url,
                             {'quiz_id': quiz_id,
@@ -260,52 +241,26 @@ class TestQuestionAPI:
                             'difficulty': 'easy'
                             },
                                 content_type='application/json')
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json()['text'] == 'text2'
 
         response = client.delete(list_put_delete_url)
-        assert response.status_code == 204
+        assert response.status_code == HTTPStatus.NO_CONTENT
 
-    def test_check_answer_endpoint(self, client) -> None:
+    def test_check_answer_endpoint(self,
+                                     client,
+                                     question_response) -> None:
         """Тест проверки ответа на вопрос"""
         
-        response = client.post(
-            reverse('quiz-list'),
-            {'title': 'Test Quiz'},
-            content_type='application/json'
-        )
-        quiz_id = response.json()['id']
-        
-        response = client.post(
-            reverse('category-list'),
-            {'title': 'Test Category'},
-            content_type='application/json'
-        )
-        category_id = response.json()['id']
-        
-        response= client.post(
-            reverse('question-list'),
-            {
-                'quiz_id': quiz_id,
-                'category_id': category_id,
-                'text': 'text',
-                'description': 'description',
-                'options': ['1', '2', '3', '4'],
-                'correct_answer': '2',
-                'explanation': 'explanation',
-                'difficulty': 'medium'
-            },
-            content_type='application/json'
-        )
-        question_id = response.json()['id']
+        question_id = question_response.json()['id']
         
         check_url = reverse('question-check-answer', kwargs={'id': question_id})
         response = client.post(
             check_url,
-            {'answer': '2'},
+            {'answer': '1'},
             content_type='application/json'
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json().get('answer') == True
         
         response = client.post(
@@ -313,20 +268,23 @@ class TestQuestionAPI:
             {'answer': '3'},
             content_type='application/json'
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.json().get('answer') == False
 
-    def test_search_questions_by_text(self, client) -> None:
+    def test_search_questions_by_text(self,
+                                     client,
+                                     category_create_get_url,
+                                     quiz_create_get_url) -> None:
         """Тест поиска вопросов по тексту"""
         response = client.post(
-            reverse('quiz-list'),
+            quiz_create_get_url,
             {'title': 'Search Test Quiz'},
             content_type='application/json'
         )
         quiz_id = response.json()['id']
         
         response = client.post(
-            reverse('category-list'),
+            category_create_get_url,
             {'title': 'Search Category'},
             content_type='application/json'
         )
@@ -348,26 +306,26 @@ class TestQuestionAPI:
         },
             content_type='application/json'
         )
-        assert response.status_code == 201
+        assert response.status_code == HTTPStatus.CREATED
         
         search_url = reverse('question-by-text', kwargs={'text': 'екст'})
         response = client.get(search_url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         results = response.json()
         assert len(results) >= 1
         assert 'екст' in results[0]['text']
 
-    def test_search_quiz_by_title(self, client) -> None:
+    def test_search_quiz_by_title(self, client, quiz_create_get_url) -> None:
         """Тест поиска квизов по названию"""
         response = client.post(
-            reverse('quiz-list'),
+            quiz_create_get_url,
             {'title': 'Search Test Quiz'},
             content_type='application/json'
         )
         
         search_url = reverse('quiz-by-title', kwargs={'title': 'Search'})
         response = client.get(search_url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         results = response.json()
         assert len(results) >= 1
         assert 'Search' in results[0]['title']
@@ -404,7 +362,7 @@ class TestQuestionAPI:
         },
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
 
     def test_question_difficulty_validation(self, client):
         """Тест значения поля difficulty"""
@@ -438,4 +396,60 @@ class TestQuestionAPI:
         },
             content_type='application/json'
         )
-        assert response.status_code == 400
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+
+    def test_not_found(self, client,
+                       category_create_get_url,
+                       quiz_create_get_url,
+                       question_create_get_url) -> None:
+        """Тест с неверным id"""
+
+        response = client.post(
+            quiz_create_get_url,
+            {'title': 'History of country',
+             'description': 'description'},
+            content_type='application/json'
+        )
+        quiz_id = response.json()['id']
+        response = client.post(
+                category_create_get_url,
+                {'title': 'History',
+                'description': 'description'},
+                content_type='application/json'
+            )
+        category_id = response.json()['id']
+        response = client.post(
+                question_create_get_url,
+                {'quiz_id': quiz_id,
+                'category_id': category_id,
+                'text': 'text',
+                'description': 'description',
+                'options': ["1", "2"],
+                'correct_answer': "1",
+                'explanation': 'explanation',
+                'difficulty': 'easy'
+                },
+                content_type='application/json')
+    
+        list_put_delete_url = reverse('question-detail', kwargs={'pk': 100})
+
+        response = client.get(list_put_delete_url)
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.put(list_put_delete_url,
+                               {'quiz_id': quiz_id,
+                               'category_id': category_id,
+                               'text': 'text',
+                               'description': 'description',
+                               'options': ["1", "2"],
+                               'correct_answer': "2",
+                               'explanation': 'explanation',
+                               'difficulty': 'easy'
+                            },
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+        response = client.delete(list_put_delete_url,
+                                content_type='application/json')
+        assert response.status_code == HTTPStatus.NOT_FOUND
